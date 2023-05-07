@@ -2,7 +2,9 @@
 #include "raycaster.h"
 #include "game.h"
 
-player_t* new_player(double x, double y, double height, double radius, double rotation, double fov){
+static const SDL_Color BLACK = {0, 0, 0};
+
+player_t* new_player(double x, double y, double height, double radius, double rotation, double fov, double intensity){
     player_t* player = malloc(sizeof(player_t));
     player->x=x;
     player->y=y;
@@ -10,6 +12,7 @@ player_t* new_player(double x, double y, double height, double radius, double ro
     player->player_radius=radius;
     player->rotation=rotation;
     player->fov=fov;
+    player->light_intenstity=intensity;
 
     return player;
 }
@@ -48,13 +51,19 @@ void draw_view(game_t* game)
         ray = new_ray(start_x, start_y, screen_x, screen_y);
         ray_cast(ray, level);
         double distance = ray->length;
-        double brightness = 1 - distance / (level->map_width);
+        double brightness = exp((-0.005)*distance);
 
-        if (distance > camera_height)
+        if (ray->color.r!=0||ray->color.g!=0||ray->color.b!=0)
         {
             int height1 = d * (level->block_height - camera_height) / distance;
             int height2 = d * camera_height / distance;
-            vertical_lineRGB(i, screen_height / 2 + height2, screen_height / 2 - height1, ray->color.r * brightness, ray->color.g * brightness, ray->color.b * brightness);
+            int x=i;
+            int y2=screen_height / 2 + height2;
+            int y1=screen_height / 2 - height1;
+            double d2=pow(distance, 2)+pow(level->block_height - camera_height,2);
+            double d1=pow(distance, 2)+pow(camera_height,2);
+            double l=pow(level->block_height , 2);
+            vertical_shaded_line(x, y1, y2, ray->color, d1, d2, l, player->light_intenstity);
             vertical_line(i, screen_height, screen_height / 2 + height2, level->ground_color);
         }
         else

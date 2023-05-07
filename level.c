@@ -4,8 +4,9 @@
 #include <SDL2/SDL.h>
 #include "level.h"
 
-static const SDL_Color BLUE = {0, 0, 255};
-static const SDL_Color DARK_BLUE = {0, 0, 150};
+static const SDL_Color BLACK = {0, 0, 0};
+static const SDL_Color BLUE = {10, 30, 200};
+static const SDL_Color DARK_BLUE = {10, 20, 150};
 static const SDL_Color DARK_VIOLET = {50, 0, 100};
 
 wall_t* new_wall(double x1, double y1, double x2, double y2, double height, SDL_Color color){
@@ -49,6 +50,11 @@ level_t* new_rand_level(size_t map_width, size_t map_height, int block_width, in
             }
         }    
     }
+    level->walls_list = realloc(level->walls_list, level->walls_count*sizeof(wall_t*));
+    level->walls_list[level->walls_count-1]=new_wall(0, 0, map_width, 0, block_height, BLACK);
+    level->walls_list[level->walls_count-1]=new_wall(0, 0, 0, map_height, block_height, BLACK);
+    level->walls_list[level->walls_count-1]=new_wall(0, map_height, map_width, map_height, block_height, BLACK);
+    level->walls_list[level->walls_count-1]=new_wall(map_width, 0, map_width, map_height, block_height, BLACK);
     return level;
 }
 
@@ -66,7 +72,7 @@ void free_level(level_t* level){
 
 bool is_in_bound(double x, double y, level_t* level)
 {
-    if (x < 0 || y < 0 || x >= level->map_width || y >= level->map_height)
+    if (x < 0 || y < 0 || x > level->map_width || y > level->map_height)
     {
         return 0;
     }

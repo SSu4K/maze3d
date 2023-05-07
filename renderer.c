@@ -111,3 +111,19 @@ void vertical_line(int x, int y1, int y2, SDL_Color color){
 void vertical_lineRGB(int x, int y1, int y2, int r, int g, int b){
 	vlineRGBA(renderer, x, y1, y2, r, g, b, 255);
 }
+
+void vertical_shaded_line(int x, int y1, int y2, SDL_Color color, double sq_distance_1, double sq_distance_2, double sq_real_length, double intensity){
+	double A=sq_real_length;
+	double B=3*sq_distance_1+sq_distance_2-sq_real_length;
+	double C=sq_distance_1;
+	double t=0;
+	double dt=1/(y2-y1);
+	double brightness=1;
+	for(int y=0;y<y2-y1;y++){
+		brightness=intensity/(A*t*t+B*t+C);
+		if(brightness>1) brightness=1;
+		SDL_SetRenderDrawColor(renderer, color.r*brightness, color.g*brightness, color.b*brightness, 255);
+		SDL_RenderDrawPoint(renderer, x, y1+y);
+		t+=dt;
+	}
+}
