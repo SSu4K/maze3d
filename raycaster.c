@@ -36,15 +36,37 @@ void ray_cast(ray_t *ray, level_t *level)
         double wall_dy = level->walls_list[i]->dy;
         double source_dx = x - level->walls_list[i]->start_x;
         double source_dy = y - level->walls_list[i]->start_y;
-        
-        double D=(wall_dy)*ray_dx-(wall_dx)*ray_dy;
-        if(D!=0){
-            double k=(source_dy*ray_dx-source_dx*ray_dy)/D;
-            if(k>0&&k<1){
-                double t = (wall_dx*source_dy-wall_dy*source_dx)/D;
-                if(t>=0&&(t<ray->length||ray->length==0)){
-                    ray->length=t;
-                    ray->color=level->walls_list[i]->color;
+
+        double D = (wall_dy)*ray_dx - (wall_dx)*ray_dy;
+        if (D > 0)
+        {
+            double Dk = (source_dy * ray_dx - source_dx * ray_dy);
+            if (Dk>=0&&Dk<D)
+            {
+                double Dt = (wall_dx * source_dy - wall_dy * source_dx);
+                if (Dt >= 0)
+                {
+                    double t = Dt/D;
+                    if(t < ray->length || ray->length == 0){
+                        ray->length = t;
+                        ray->color = level->walls_list[i]->color;
+                    }
+                }
+            }
+        }
+        else if (D < 0)
+        {
+            double Dk = (source_dy * ray_dx - source_dx * ray_dy);
+            if (Dk>=D&&Dk<0)
+            {
+                double Dt = (wall_dx * source_dy - wall_dy * source_dx);
+                if (Dt <= 0)
+                {
+                    double t = Dt/D;
+                    if(t < ray->length || ray->length == 0){
+                        ray->length = t;
+                        ray->color = level->walls_list[i]->color;
+                    }
                 }
             }
         }

@@ -48,7 +48,7 @@ void draw_view(game_t* game)
         ray = new_ray(start_x, start_y, screen_x, screen_y);
         ray_cast(ray, level);
         double distance = ray->length;
-        double brightness = 1 - distance / (level->map_width * level->map_height);
+        double brightness = 1 - distance / (level->map_width);
 
         if (distance > camera_height)
         {
