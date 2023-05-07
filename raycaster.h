@@ -20,5 +20,6 @@ typedef struct Ray
 ray_t *new_ray(double start_x, double start_y, double screen_x, double screen_y);
 float get_ray_step(float distance);
 void ray_cast(ray_t *ray, level_t* level);
+void new_ray_cast(ray_t *ray, level_t *level);
 
 #endif

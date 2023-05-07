@@ -7,18 +7,16 @@
 
 static const SDL_Color BLACK = {0, 0, 0};
 
-
 ray_t *new_ray(double start_x, double start_y, double screen_x, double screen_y)
 {
     ray_t *new_ray = malloc(sizeof(ray_t));
-    double dd = 1;
     double dx = screen_x - start_x;
     double dy = screen_y - start_y;
-    double d = dd / sqrt(pow(dx, 2) + pow(dy, 2));
+    double d = 1 / sqrt(pow(dx, 2) + pow(dy, 2));
 
     new_ray->start_x = start_x;
     new_ray->start_y = start_y;
-    new_ray->dl = dd;
+    new_ray->dl = 1;
     new_ray->dx = dx * d;
     new_ray->dy = dy * d;
     new_ray->length = 0;
@@ -26,36 +24,29 @@ ray_t *new_ray(double start_x, double start_y, double screen_x, double screen_y)
     return new_ray;
 }
 
-float get_ray_step(float distance){
-    return RAY_MAX_STEP + (RAY_MIN_STEP-RAY_MAX_STEP)*exp((-1)/RAY_STEP_T*distance);
-}
-
-void ray_cast(ray_t *ray, level_t* level)
+void ray_cast(ray_t *ray, level_t *level)
 {
     double x = ray->start_x;
     double y = ray->start_y;
-    while (is_in_bound(x, y, level))
+    double ray_dx = ray->dx;
+    double ray_dy = ray->dy;
+    for (int i = 0; i < level->walls_count; i++)
     {
-        double step = get_ray_step(ray->length);
-        x += ray->dx*step;
-        y += ray->dy*step;
-        ray->length += step;
-        if (get_block_color(x, y, level) == 1)
-        {
-            if (abs(fmod(x, level->block_width)-level->block_width/2) > abs(fmod(y, level->block_width)-level->block_width/2))
-            {   
-                
-                ray->color = level->block_color_1;
-                
-                
+        double wall_dx = level->walls_list[i]->dx;
+        double wall_dy = level->walls_list[i]->dy;
+        double source_dx = x - level->walls_list[i]->start_x;
+        double source_dy = y - level->walls_list[i]->start_y;
+        
+        double D=(wall_dy)*ray_dx-(wall_dx)*ray_dy;
+        if(D!=0){
+            double k=(source_dy*ray_dx-source_dx*ray_dy)/D;
+            if(k>0&&k<1){
+                double t = (wall_dx*source_dy-wall_dy*source_dx)/D;
+                if(t>=0&&(t<ray->length||ray->length==0)){
+                    ray->length=t;
+                    ray->color=level->walls_list[i]->color;
+                }
             }
-            else
-            {
-                ray->color = level->block_color_2;
-            }
-            return;
         }
     }
-    ray->length=0;
-    return;
 }
