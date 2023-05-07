@@ -7,7 +7,7 @@ What already works:
   - randomized walls generation
   - improved analytical raycasting
   
-  <img src="https://imgur.com/a/moIgjJ4"/>
+  <img src="https://imgur.com/a/moIgjJ4.jpg"/>
  
 TODO:
   - add player collisions
