@@ -1,0 +1,6 @@
+# ignore all .o files
+*.o
+
+#ignore main
+main
+

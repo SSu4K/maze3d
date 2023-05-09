@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "raycaster.h": "c",
-        "game.h": "c",
-        "sdl.h": "c"
-    }
-}
