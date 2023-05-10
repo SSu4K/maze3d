@@ -18,6 +18,6 @@ typedef struct Ray
 } ray_t;
 
 ray_t *new_ray(double start_x, double start_y, double screen_x, double screen_y);
-void ray_cast(ray_t *ray, level_t* level);
+void ray_cast(ray_t *ray, wall_t **walls_list, bool *visibility_map, size_t walls_count);
 
 #endif

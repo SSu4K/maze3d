@@ -24,32 +24,36 @@ ray_t *new_ray(double start_x, double start_y, double screen_x, double screen_y)
     return new_ray;
 }
 
-void ray_cast(ray_t *ray, level_t *level)
+void ray_cast(ray_t *ray, wall_t **walls_list, bool *visibility_map, size_t walls_count)
 {
     double x = ray->start_x;
     double y = ray->start_y;
     double ray_dx = ray->dx;
     double ray_dy = ray->dy;
-    for (int i = 0; i < level->walls_count; i++)
+    for (int i = 0; i < walls_count; i++)
     {
-        double wall_dx = level->walls_list[i]->dx;
-        double wall_dy = level->walls_list[i]->dy;
-        double source_dx = x - level->walls_list[i]->start_x;
-        double source_dy = y - level->walls_list[i]->start_y;
+        if (!visibility_map[i])
+            continue;
+
+        double wall_dx = walls_list[i]->dx;
+        double wall_dy = walls_list[i]->dy;
+        double source_dx = x - walls_list[i]->start_x;
+        double source_dy = y - walls_list[i]->start_y;
 
         double D = (wall_dy)*ray_dx - (wall_dx)*ray_dy;
         if (D > 0)
         {
             double Dk = (source_dy * ray_dx - source_dx * ray_dy);
-            if (Dk>=0&&Dk<D)
+            if (Dk >= 0 && Dk < D)
             {
                 double Dt = (wall_dx * source_dy - wall_dy * source_dx);
                 if (Dt >= 0)
                 {
-                    double t = Dt/D;
-                    if(t < ray->length || ray->length == 0){
+                    double t = Dt / D;
+                    if (t < ray->length || ray->length == 0)
+                    {
                         ray->length = t;
-                        ray->color = level->walls_list[i]->color;
+                        ray->color = walls_list[i]->color;
                     }
                 }
             }
@@ -57,15 +61,16 @@ void ray_cast(ray_t *ray, level_t *level)
         else if (D < 0)
         {
             double Dk = (source_dy * ray_dx - source_dx * ray_dy);
-            if (Dk>=D&&Dk<0)
+            if (Dk >= D && Dk < 0)
             {
                 double Dt = (wall_dx * source_dy - wall_dy * source_dx);
                 if (Dt <= 0)
                 {
-                    double t = Dt/D;
-                    if(t < ray->length || ray->length == 0){
+                    double t = Dt / D;
+                    if (t < ray->length || ray->length == 0)
+                    {
                         ray->length = t;
-                        ray->color = level->walls_list[i]->color;
+                        ray->color = walls_list[i]->color;
                     }
                 }
             }
