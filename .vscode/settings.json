@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "sdl2_gfxprimitives.h": "c",
+        "compare": "c",
+        "type_traits": "c",
+        "renderer.h": "c"
+    }
+}

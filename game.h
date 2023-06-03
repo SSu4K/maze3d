@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "level.h"
+#include "lighting.h"
 
 typedef struct Player
 {
@@ -19,6 +20,7 @@ typedef struct Game
 {
     level_t *level;
     player_t *player;
+    double render_distance;
 } game_t;
 
 player_t *new_player(double x, double y, double height, double radius, double rotation, double fov, double intensity);

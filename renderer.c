@@ -7,6 +7,7 @@
 
 static SDL_Renderer *renderer = NULL;
 static SDL_Window *window = NULL;
+static SDL_Surface *surface = NULL;
 
 // Screen dimension constants
 const int WINDOW_WIDTH = 1280;
@@ -24,6 +25,7 @@ int window_height()
 
 void window_update()
 {
+	
 	rectangleRGBA(renderer, 0, 0, WINDOW_WIDTH-1, WINDOW_HEIGHT-1, 0, 0, 0, 255);
 	SDL_RenderPresent(renderer);
 	SDL_RenderClear(renderer);
@@ -80,6 +82,7 @@ int renderer_init()
 	{
 		// Create renderer for window
 		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+		surface = SDL_GetWindowSurface(window);
 
 		if (renderer == NULL)
 		{
@@ -93,19 +96,33 @@ int renderer_init()
 			return 3;
 		}
 	}
-
-	SDL_Delay(10);
 	return 0;
 }
 
-void draw_lineRGB(int x1, int y1, int x2, int y2, int r, int g, int b)
-{
-	lineRGBA(renderer, x1, y1, x2, y2, r, g, b,
-			 255);
-}
+void my_vline(SDL_Surface *dst, int x1, int y1, int y2, Uint32 color)                        
+    {                                                         
+        int length;           
+		//fprintf(stderr, "Pitch: %d, Width: %d\n", dst->pitch, WINDOW_WIDTH);                             
+        int pitch = dst->pitch/dst->format->BytesPerPixel; 
+        Uint32 *pixel;                                        
+        if (y1 <= y2) {                                        
+            pixel = (Uint32 *)dst->pixels + y1 * pitch + x1;     
+            length = y2 - y1 + 1;     
+        } else {                                               
+            pixel = (Uint32 *)dst->pixels + y2 * pitch + x1;                                                      
+            length = y1 - y2 + 1;     
+        }                                                      
+        while (length--) {                                     
+            if(pixel!=NULL){
+				*pixel = color;
+				pixel += pitch;
+			}                                                                                  
+        }                       
+    }
 
 void vertical_line(int x, int y1, int y2, SDL_Color color){
 	vlineRGBA(renderer, x, y1, y2, color.r, color.g, color.b, 255);
+	//my_vline(surface, x, y1, y2, SDL_MapRGB(surface->format, color.r, color.g, color.b));
 }
 
 void vertical_lineRGB(int x, int y1, int y2, int r, int g, int b){

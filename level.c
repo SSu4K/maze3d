@@ -50,11 +50,13 @@ level_t* new_rand_level(size_t map_width, size_t map_height, int block_width, in
             }
         }    
     }
+    /*
     level->walls_list = realloc(level->walls_list, level->walls_count*sizeof(wall_t*));
     level->walls_list[level->walls_count-1]=new_wall(0, 0, map_width, 0, block_height, BLACK);
     level->walls_list[level->walls_count-1]=new_wall(0, 0, 0, map_height, block_height, BLACK);
     level->walls_list[level->walls_count-1]=new_wall(0, map_height, map_width, map_height, block_height, BLACK);
     level->walls_list[level->walls_count-1]=new_wall(map_width, 0, map_width, map_height, block_height, BLACK);
+    */
     return level;
 }
 

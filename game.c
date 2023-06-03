@@ -20,6 +20,7 @@ void free_game(game_t *game)
 {
     free_level(game->level);
     free(game->player);
+    light_free();
 }
 
 bool *get_visibility_map(game_t *game)
@@ -49,6 +50,9 @@ bool *get_visibility_map(game_t *game)
         double y = -game->player->y;
         x += game->level->walls_list[i]->start_x;
         y += game->level->walls_list[i]->start_y;
+        if(abs(x)>game->render_distance||abs(y)>game->render_distance){
+            continue;
+        }
         double angle = atan(y / x);
         if (angle - min_angle < fov)
         {
@@ -57,10 +61,14 @@ bool *get_visibility_map(game_t *game)
         }
         x += game->level->walls_list[i]->dx;
         y += game->level->walls_list[i]->dy;
+        if(abs(x)>game->render_distance||abs(y)>game->render_distance){
+            continue;
+        }
         angle = atan(y / x);
         if (angle - min_angle < fov)
         {
             map[i] = 1;
+            continue;
         }
     }
 
@@ -105,9 +113,12 @@ void draw_view(game_t *game)
             int height2 = d * camera_height / distance;
             int y2 = screen_height / 2 + height2;
             int y1 = screen_height / 2 - height1;
+            //double brightness = exp(-distance/game->player->light_intenstity);
+            double brightness = get_intensity(distance, 0);
+            SDL_Color wall_color = {ray->color.r*brightness, ray->color.g*brightness, ray->color.b*brightness};
 
-            vertical_line(i, y1, y2, ray->color);
-            vertical_line(i, screen_height, screen_height / 2 + height2, level->ground_color);
+            vertical_line(i, y1, y2, wall_color);
+            vertical_line(i, screen_height / 2 + height2, screen_height, level->ground_color);
         }
         else
         {
@@ -123,6 +134,7 @@ void run_game(game_t *game)
 {
     renderer_init();
     player_t *player = game->player;
+    light_init(game->render_distance, 1, player->light_intenstity);
     printf("Started game\n");
 
     while (!is_key_down(SDLK_ESCAPE))
