@@ -6,5 +6,5 @@ main
 
 #ignore vscode
 
-.vscode\*
+.vscode/*
 

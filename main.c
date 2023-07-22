@@ -7,8 +7,8 @@
 #define PLAYER_FOV 1.5
 #define BLOCK_WIDTH 50.0
 #define BLOCK_HEIGHT 1000.0
-#define LIGHT_INTENSITY 1000
-#define RENDER_DISTANCE 300
+#define LIGHT_INTENSITY 4000
+#define RENDER_DISTANCE 500
 
 int main(void)
 {
